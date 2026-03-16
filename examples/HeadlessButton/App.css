@@ -1,0 +1,131 @@
+/* app.css */
+
+/* Color Palette */
+:root {
+  --md-white: #ffffff;
+  --md-black: #000000;
+
+  /* Base colors */
+  --md-base: #dfe5ec;
+  --md-base-50: #f8fafb;
+  --md-base-100: #f3f6f9;
+  --md-base-200: #e3eaf2;
+  --md-base-300: #dfe5ec;
+  --md-base-400: #dbe0e6;
+  --md-base-500: #d7dbe0;
+  --md-base-600: #c6cbd2;
+  --md-base-700: #74787e;
+  --md-base-800: #45494f;
+  --md-base-900: #1b1d20;
+
+  --md-primary: #2c6fd1;
+  --md-primary-light: #bcd8ff;
+  --md-primary-dark: #375a8b;
+
+  --md-secondary: #5b6371;
+  --md-secondary-light: #c2ccdc;
+  --md-secondary-dark: #444c58;
+
+  --md-success: #3e9108;
+  --md-success-light: #c6ffaa;
+  --md-success-dark: #479108;
+
+  --md-warning: #e8e971;
+  --md-warning-light: #f9ffaa;
+  --md-warning-dark: #918908;
+
+  --md-error: #d35153;
+  --md-error-light: #ffaeaa;
+  --md-error-dark: #910813;
+
+  /* Text colors */
+  --md-on-base: #1b1d20;
+  --md-on-primary: #ffffff;
+  --md-on-secondary: #ffffff;
+  --md-on-success: #ffffff;
+  --md-on-warning: #1b1d20;
+  --md-on-error: #ffffff;
+
+  /* Borders */
+  --md-border-width: 1px;
+  --md-border-radius: 2rem;
+  --md-border-base: var(--md-border-width) solid var(--md-base);
+  --md-border-primary: var(--md-border-width) solid var(--md-primary);
+  --md-border-secondary: var(--md-border-width) solid var(--md-secondary);
+  --md-border-success: var(--md-border-width) solid var(--md-success);
+  --md-border-warning: var(--md-border-width) solid var(--md-warning);
+  --md-border-danger: var(--md-border-width) solid var(--md-error);
+
+  /* Elevation / shadows */
+  --md-elevation-1: 0px 1px 2px rgba(69,73,79,0.3), 0px 1px 3px 1px rgba(69,73,79,0.15);
+  --md-elevation-2: 0px 1px 2px rgba(69,73,79,0.3), 0px 2px 6px 2px rgba(69,73,79,0.15);
+  --md-elevation-3: 0px 4px 8px 3px rgba(69,73,79,0.15), 0px 1px 3px rgba(69,73,79,0.3);
+
+  /* Typography */
+  --md-text-font-family: Roboto, sans-serif;
+  --md-text-color: var(--md-on-base);
+  --md-text-title-color: var(--md-on-base);
+
+  --md-text-button-font-size: 0.875rem;
+  --md-text-button-font-weight: 500;
+  --md-text-button-letter-spacing: 1.25px;
+  --md-text-button-text-transform: uppercase;
+  --md-text-button-color: var(--md-text-color);
+}
+
+/* Dark Mode overrides */
+[data-theme="dark"] {
+  --md-base-50: #1b1d20;
+  --md-base-100: #45494f;
+  --md-base-200: #74787e;
+  --md-on-base: #f8fafb;
+  --md-text-color: var(--md-on-base);
+}
+
+/* Button base styles */
+button.hlm-button {
+  font-family: var(--md-text-font-family);
+  font-size: var(--md-text-button-font-size);
+  font-weight: var(--md-text-button-font-weight);
+  letter-spacing: var(--md-text-button-letter-spacing);
+  text-transform: var(--md-text-button-text-transform);
+  padding: 0.5rem 1rem;
+  border-radius: var(--md-border-radius);
+  border: var(--md-border-base);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Hover, Focus, Active */
+button.hlm-button :hover {
+  filter: brightness(1.05);
+}
+
+button.hlm-button :focus {
+  outline: var(--md-border-width) solid var(--md-primary);
+  outline-offset: 2px;
+}
+
+button.hlm-button :active {
+  filter: brightness(0.95);
+}
+
+button.hlm-button :disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Outlined variant example (you can extend) */
+button.hlm-button .outlined {
+  background-color: transparent;
+}
+
+/* Icon spacing */
+button.hlm-button  > .icon {
+  display: inline-flex;
+  align-items: center;
+}

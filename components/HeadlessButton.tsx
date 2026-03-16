@@ -1,71 +1,137 @@
-import React, { forwardRef, ButtonHTMLAttributes } from "react";
+'use client'
 
-interface HeadlessButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "success" | "warning" | "error";
-  size?: "sm" | "md" | "lg";
+import { useState, useRef, useEffect, type ElementType, type Ref } from 'react'
+
+let DEFAULT_BUTTON_TAG = 'button' as const
+
+export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'error'
+export type ButtonSize = 'sm' | 'md' | 'lg'
+
+export interface ButtonProps<TTag extends ElementType = typeof DEFAULT_BUTTON_TAG> extends React.ComponentPropsWithoutRef<TTag> {
+  disabled?: boolean
+  autoFocus?: boolean
+  variant?: ButtonVariant
+  size?: ButtonSize
+  as?: TTag
+  style?: React.CSSProperties
 }
 
-export const HeadlessButton = forwardRef<HTMLButtonElement, HeadlessButtonProps>(
-  ({ variant = "primary", size = "md", className = "", ...props }, ref) => {
-    const variantStyles: Record<string, string> = {
-      primary: "var(--md-primary)",
-      secondary: "var(--md-secondary)",
-      success: "var(--md-success)",
-      warning: "var(--md-warning)",
-      error: "var(--md-error)",
-    };
+export function Button<TTag extends ElementType = typeof DEFAULT_BUTTON_TAG>(
+  {
+    as,
+    disabled = false,
+    autoFocus = false,
+    variant = 'primary',
+    size = 'md',
+    style,
+    children,
+    ...props
+  }: ButtonProps<TTag>,
+  ref: Ref<HTMLElement>
+) {
+  const Tag = as || DEFAULT_BUTTON_TAG
+  const [hover, setHover] = useState(false)
+  const [focus, setFocus] = useState(false)
+  const [active, setActive] = useState(false)
+  const internalRef = useRef<HTMLElement>(null)
 
-    const textColor: Record<string, string> = {
-      primary: "var(--md-on-primary)",
-      secondary: "var(--md-on-secondary)",
-      success: "var(--md-on-success)",
-      warning: "var(--md-on-warning)",
-      error: "var(--md-on-error)",
-    };
+  // autoFocus effect
+  useEffect(() => {
+    if (autoFocus && internalRef.current) {
+      internalRef.current.focus()
+    }
+  }, [autoFocus])
 
-    const sizeStyles: Record<string, string> = {
-      sm: "0.5rem 1rem",
-      md: "0.75rem 1.5rem",
-      lg: "1rem 2rem",
-    };
-
-    return (
-      <button
-        ref={ref}
-        {...props}
-        style={{
-          backgroundColor: variantStyles[variant],
-          color: textColor[variant],
-          padding: sizeStyles[size],
-          border: `var(--md-border-width) solid ${variantStyles[variant]}`,
-          borderRadius: "var(--md-border-radius)",
-          fontFamily: "var(--md-text-font-family)",
-          fontSize: "var(--md-text-button-font-size)",
-          textTransform: "var(--md-text-button-text-transform)",
-          cursor: props.disabled ? "not-allowed" : "pointer",
-          opacity: props.disabled ? 0.6 : 1,
-          outline: "none",
-          transition: "all 0.2s ease",
-        }}
-        className={`headless-button ${className}`}
-      >
-        {props.children}
-        <style jsx>{`
-          .headless-button:not(:disabled):hover {
-            border-color: var(--md-border-hover);
-            filter: brightness(0.95);
-          }
-          .headless-button:not(:disabled):active {
-            filter: brightness(0.9);
-          }
-          .headless-button:focus-visible {
-            outline: var(--md-outline-focus);
-            outline-offset: var(--md-outline-offset);
-          }
-        `}</style>
-      </button>
-    );
+  const handleMouseEnter = () => !disabled && setHover(true)
+  const handleMouseLeave = () => {
+    setHover(false)
+    setActive(false)
   }
-);
+  const handleMouseDown = () => !disabled && setActive(true)
+  const handleMouseUp = () => setActive(false)
+  const handleFocus = () => !disabled && setFocus(true)
+  const handleBlur = () => setFocus(false)
 
-HeadlessButton.displayName = "HeadlessButton";
+  // Sizes
+  const sizeStyles: Record<ButtonSize, React.CSSProperties> = {
+    sm: { padding: '0.25rem 0.5rem', fontSize: '0.75rem' },
+    md: { padding: '0.5rem 1rem', fontSize: '0.875rem' },
+    lg: { padding: '0.75rem 1.5rem', fontSize: '1rem' },
+  }
+
+  // Variants
+  const variantColors: Record<ButtonVariant, { bg: string; bgHover: string; bgActive: string; color: string; border: string }> = {
+    primary: {
+      bg: 'var(--md-primary)',
+      bgHover: 'var(--md-primary-light)',
+      bgActive: 'var(--md-primary-dark)',
+      color: 'var(--md-on-primary)',
+      border: 'var(--md-border-primary)',
+    },
+    secondary: {
+      bg: 'var(--md-secondary)',
+      bgHover: 'var(--md-secondary-light)',
+      bgActive: 'var(--md-secondary-dark)',
+      color: 'var(--md-on-secondary)',
+      border: 'var(--md-border-secondary)',
+    },
+    success: {
+      bg: 'var(--md-success)',
+      bgHover: 'var(--md-success-light)',
+      bgActive: 'var(--md-success-dark)',
+      color: 'var(--md-on-success)',
+      border: 'var(--md-border-success)',
+    },
+    warning: {
+      bg: 'var(--md-warning)',
+      bgHover: 'var(--md-warning-light)',
+      bgActive: 'var(--md-warning-dark)',
+      color: 'var(--md-on-warning)',
+      border: 'var(--md-border-warning)',
+    },
+    error: {
+      bg: 'var(--md-error)',
+      bgHover: 'var(--md-error-light)',
+      bgActive: 'var(--md-error-dark)',
+      color: 'var(--md-on-error)',
+      border: 'var(--md-border-danger)',
+    },
+  }
+
+  const colors = variantColors[variant] || variantColors['primary']
+  const combinedStyle: React.CSSProperties = {
+    backgroundColor: disabled ? 'var(--md-base-200)' : active ? colors.bgActive : hover ? colors.bgHover : colors.bg,
+    color: disabled ? 'var(--md-text-disabled-color)' : colors.color,
+    border: focus ? 'var(--md-border-focus)' : colors.border,
+    borderRadius: 'var(--md-border-radius)',
+    boxShadow: focus ? 'var(--md-elevation-2)' : active ? 'var(--md-elevation-1)' : 'var(--md-elevation-0)',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    transition: 'all 0.2s ease',
+    ...sizeStyles[size],
+    ...style,
+  }
+
+  return (
+    <Tag
+      ref={(node) => {
+        internalRef.current = node
+        if (typeof ref === 'function') ref(node)
+        else if (ref) (ref as React.MutableRefObject<HTMLElement | null>).current = node
+      }}
+      disabled={disabled}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+	  className="hlm-button"
+      style={combinedStyle}
+      {...props}
+    >
+      {children}
+    </Tag>
+  )
+}
+
+export default Button
